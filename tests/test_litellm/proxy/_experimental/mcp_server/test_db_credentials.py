@@ -661,6 +661,7 @@ def test_prepare_mcp_server_data_create_carries_token_exchange_columns():
         token_exchange_endpoint="https://idp.example.com/oauth2/token",
         audience="https://upstream.example.com",
         subject_token_type="urn:ietf:params:oauth:token-type:jwt",
+        token_exchange_profile="entra_obo",
         credentials={"client_id": "te-client", "client_secret": "te-secret"},
     )
 
@@ -669,6 +670,7 @@ def test_prepare_mcp_server_data_create_carries_token_exchange_columns():
     assert data["token_exchange_endpoint"] == "https://idp.example.com/oauth2/token"
     assert data["audience"] == "https://upstream.example.com"
     assert data["subject_token_type"] == "urn:ietf:params:oauth:token-type:jwt"
+    assert data["token_exchange_profile"] == "entra_obo"
 
 
 def test_prepare_mcp_server_data_update_carries_token_exchange_columns():
@@ -682,6 +684,7 @@ def test_prepare_mcp_server_data_update_carries_token_exchange_columns():
         token_exchange_endpoint="https://idp.example.com/oauth2/token",
         audience="https://upstream.example.com",
         subject_token_type="urn:ietf:params:oauth:token-type:jwt",
+        token_exchange_profile="entra_obo",
     )
 
     data = _prepare_mcp_server_data(request, exclude_unset=True)
@@ -689,3 +692,4 @@ def test_prepare_mcp_server_data_update_carries_token_exchange_columns():
     assert data["token_exchange_endpoint"] == "https://idp.example.com/oauth2/token"
     assert data["audience"] == "https://upstream.example.com"
     assert data["subject_token_type"] == "urn:ietf:params:oauth:token-type:jwt"
+    assert data["token_exchange_profile"] == "entra_obo"
