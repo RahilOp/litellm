@@ -344,7 +344,7 @@ const MCPServerEdit: React.FC<MCPServerEditProps> = ({
   const fetchTools = async () => {
     if (!accessToken || !mcpServer.server_id) return;
 
-    // OBO/M2M/static auth is attached server-side from the stored credential, so
+    // authorization_code/M2M/static auth is attached server-side from the stored credential, so
     // a plain GET /tools/list?server_id suffices. PKCE passthrough holds the token
     // in the browser, so forward it from sessionStorage as the x-mcp header the
     // same way the Tools playground does.
@@ -687,7 +687,7 @@ const MCPServerEdit: React.FC<MCPServerEditProps> = ({
       const updated = await updateMCPServer(accessToken, payload);
 
       // Persist the token staged via "Authorize & Fetch" (mirrors the create flow's
-      // commit-on-submit): OBO writes the per-user token to the DB, passthrough keeps
+      // commit-on-submit): authorization_code writes the per-user token to the DB, passthrough keeps
       // it in sessionStorage. M2M/static auth resolve server-side and need neither.
       if (oauthTokenResponse?.access_token) {
         const oauthMode = getMcpOAuthMode({

@@ -467,7 +467,7 @@ const CreateMCPServer: React.FC<CreateMCPServerProps> = ({
           : await registerMCPServer(accessToken, payload);
 
         // Persist the token obtained via "Authorize & Fetch" once the server
-        // exists (so we have its server_id). OBO holds the per-user token in the
+        // exists (so we have its server_id). authorization_code holds the per-user token in the
         // backend, so write it to the DB (has_credentials=True). Passthrough
         // forwards a browser-held token, so it stays in sessionStorage only.
         if (oauthTokenResponse?.access_token && response?.server_id) {

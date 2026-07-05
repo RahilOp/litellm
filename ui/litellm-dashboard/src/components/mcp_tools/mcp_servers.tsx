@@ -72,7 +72,7 @@ const compareServers = (a: MCPServer, b: MCPServer, sort: SortKey): number => {
 const { Text: AntdText, Title: AntdTitle } = Typography;
 const EDIT_OAUTH_UI_STATE_KEY = "litellm-mcp-oauth-edit-state";
 
-// Server id stashed by the Tools tab before an OBO OAuth redirect, read once at
+// Server id stashed by the Tools tab before an authorization_code OAuth redirect, read once at
 // mount so the redirect returns straight to that server's Tools tab.
 const readToolsOAuthServerId = (): string | null => {
   if (typeof window === "undefined") {
@@ -121,7 +121,7 @@ const MCPServers: React.FC<MCPServerProps> = ({ accessToken, userRole, userID })
   // state
   const [serverIdToDelete, setServerToDelete] = useState<string | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  // Server whose Tools tab should be reopened after an OBO OAuth redirect; read
+  // Server whose Tools tab should be reopened after an authorization_code OAuth redirect; read
   // once from sessionStorage so the restored server selection is correct on the
   // first render. Cleared when the user navigates back to the list (handleBack)
   // so a later visit to the same server defaults to Overview, not the Tools tab.
