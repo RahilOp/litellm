@@ -43,7 +43,6 @@ const MCPToolsViewer = ({
   const oauthMode = getMcpOAuthMode({ auth_type, oauth2_flow, delegate_auth_to_upstream });
   const isPassthrough = oauthMode === "passthrough";
   const isAuthorizationCode = oauthMode === "authorization_code";
-  const isTokenExchange = oauthMode === "token_exchange";
   const [oauthToken, setOauthToken] = useState<string | null>(() =>
     isPassthrough && isTokenValid(serverId, userID) ? getToken(serverId, userID)?.access_token ?? null : null,
   );
@@ -244,13 +243,17 @@ const MCPToolsViewer = ({
   const toolsData = mcpToolsResponse?.tools || [];
 
   const toolsError = mcpToolsError as (Error & { status?: number; response?: { status?: number } }) | null;
-  const tokenExchangeRejected = isTokenExchange && (toolsError?.status ?? toolsError?.response?.status) === 401;
+  // authorization_code only: a 401 from the list call means the stored credential is unusable and
+  // the backend's refresh could not mint a token, so the user must re-authorize (the browser flow).
+  // token_exchange has no gateway-side authorize step, so it is not gated here.
+  const authorizationCodeTokenRejected =
+    isAuthorizationCode && (toolsError?.status ?? toolsError?.response?.status) === 401;
 
   // An auth gate replaces the tool list when the user must authenticate first:
   // passthrough needs a browser token; authorization_code needs a stored DB credential or a
   // still-valid one — a 401 from the list call means the backend has none even
   // after attempting a refresh, so re-authorization is required.
-  const authGateActive = (isPassthrough && !oauthToken) || authorizationCodeNeedsAuth || tokenExchangeRejected;
+  const authGateActive = (isPassthrough && !oauthToken) || authorizationCodeNeedsAuth || authorizationCodeTokenRejected;
   // Treat authorization_code credential-status loading as "tools loading" so the empty state
   // doesn't flash before we know whether the user needs to authorize.
   const toolsAreaLoading = isLoadingTools || authorizationCodeStatusLoading;
@@ -379,7 +382,7 @@ const MCPToolsViewer = ({
                     server-side refresh could not mint one, e.g. an expired token
                     with no usable refresh token). A refreshable token is refreshed
                     on the list call and never trips this gate. */}
-                {(authorizationCodeNeedsAuth || tokenExchangeRejected) && (
+                {(authorizationCodeNeedsAuth || authorizationCodeTokenRejected) && (
                   <div className="p-4 text-center bg-white border border-gray-200 rounded-lg">
                     <LockOutlined className="text-2xl text-gray-400 mb-2" />
                     <p className="text-xs font-medium text-gray-700 mb-1">Authentication required</p>
