@@ -8,6 +8,7 @@ from starlette.types import Scope
 
 from litellm._logging import verbose_logger
 from litellm.proxy._types import (
+    UI_TEAM_ID,
     LiteLLM_TeamTable,
     ProxyException,
     SpecialHeaders,
@@ -724,6 +725,9 @@ class MCPRequestHandler:
             f"MCP team permission lookup: team_id={user_api_key_auth.team_id if user_api_key_auth else None}"
         )
         if not user_api_key_auth or not user_api_key_auth.team_id or not prisma_client:
+            return None
+
+        if user_api_key_auth.team_id == UI_TEAM_ID:
             return None
 
         # Get the team object (which has object_permission already loaded)
